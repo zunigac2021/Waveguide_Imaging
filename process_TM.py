@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 import pandas as pd 
 
 import os 
-import explore_data as explore                   # TODO add to repo 
-import check_images as check
+import re
+#import check_images as check
 import functools 
 #from skimage.measure import block_reduce
 import cv2 as cv2 
@@ -12,6 +12,46 @@ import time
 from concurrent import futures
 from itertools import repeat 
 
+
+
+def greater_filev2(file1,file2):
+    """
+    Compare two files based on the x and y coordinates extracted from their contents.
+
+    The function uses regular expressions to extract the x and y coordinates from the file contents.
+    It then compares the x coordinates, and if they are equal, compares the y coordinates.
+    The function returns 1 if file1 has a greater coordinate, -1 if file2 has a greater coordinate, and 0 if the coordinates are equal.
+
+    Args:
+        file1 (str): The content of the first file.
+        file2 (str): The content of the second file.
+
+    Returns:
+        int: 1 if file1 has a greater coordinate, -1 if file2 has a greater coordinate, and 0 if the coordinates are equal.
+    """
+    
+
+    match1 = re.search(r"x=([-+]?[0-9]+(\.[0-9]+)?)(?:\s*)mm,\s*y=([-+]?[0-9]+(\.[0-9]+)?)(?:\s*)mm", file1)
+    if match1:
+        x1 = float(match1.group(1))
+        y1 = float(match1.group(3))
+        #print(x1,y1)
+    match2 = re.search(r"x=([-+]?[0-9]+(\.[0-9]+)?)(?:\s*)mm,\s*y=([-+]?[0-9]+(\.[0-9]+)?)(?:\s*)mm", file2)
+    if match2:
+        x2 = float(match2.group(1))
+        y2 = float(match2.group(3))
+        #print(x2,y2)
+    if x1 > x2:
+        return 1
+    elif x1 < x2:
+        return -1
+    else:
+        if y1 > y2 :
+            return 1
+        elif y1 < y2:
+            return -1
+        else:
+            return 0
 
 def getA_from_files(direc,file_list,save_file=False,out_path = ""):
     """
